@@ -2,12 +2,13 @@
 {% block title %}Sākums{% endblock %}
 {% block content %}
 <h1>Izvēlies savu Case</h1>
-<div class="konteineri">
-    <div class="swiper mySwiper gludeklis">
+<div class="containers">
+    <div class="swiper mySwiper case-swiper">
             <div class="swiper-wrapper">
                 {% for case in cases %}
-                    <div class="swiper-slide">
-                        <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="Logo" class="case">
+                    <div class="swiper-slide case-slide">
+                        <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="{{case['name']}}" class="case">
+                        <h2>{{case['name']}}</h2>
                     </div>
                 {% endfor %}
             </div>

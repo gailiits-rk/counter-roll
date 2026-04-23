@@ -8,8 +8,8 @@ body {
 }
 header {
     background-color: #000000;
-    color: #ff8000;
     padding: 10px;
+    color: #ff8000;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -27,11 +27,8 @@ nav a:hover {
     background-color: #ff8000;
     color: #000000;
 }
-main {
-    padding: 20px;
-    
-}
-.konteineri{
+
+.containers{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,12 +45,24 @@ h1{
 .case{
     height:75%
 }
-.gludeklis{
-    background-color: #ff8000;
+.case-swiper{
+    background: #333;
     height: 77vh;
     aspect-ratio: 16/9;
-    border-radius: 20px;
     padding: auto;
+    border-radius: 20px;
+}
+.case-slide{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #000;
+    background: #333;
+    background: radial-gradient(circle,rgba(51, 51, 51, 1) 0%, rgba(255, 128, 0, 1) 33%, rgba(51, 51, 51, 1) 67%, #ff8000 100%);
+    border-radius: 20px;
+    border-style: solid;
+    border-color: #ff8000;
 }
 .swiper-pagination-bullet-active {
      background-color: #000 !important;
