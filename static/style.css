@@ -1,0 +1,60 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    color: #ff8000;
+    margin: 0;
+    padding: 0;
+    
+}
+header {
+    background-color: #000000;
+    color: #ff8000;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.logo {
+    height: 70px;
+}
+nav a {
+    color: #ff8000;
+    margin: 0 10px;
+    text-decoration: none;
+}
+nav a:hover {
+    text-decoration: underline;
+    background-color: #ff8000;
+    color: #000000;
+}
+main {
+    padding: 20px;
+    
+}
+.konteineri{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+footer {
+    background-color: #000000;
+    text-align: center;
+    padding: 10px;
+    color: #ff8000;
+}
+h1{
+    text-align: center;
+}
+.case{
+    height:75%
+}
+.gludeklis{
+    background-color: #ff8000;
+    height: 77vh;
+    aspect-ratio: 16/9;
+    border-radius: 20px;
+    padding: auto;
+}
+.swiper-pagination-bullet-active {
+     background-color: #000 !important;
+}

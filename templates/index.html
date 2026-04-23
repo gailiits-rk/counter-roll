@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Sākums{% endblock %}
+{% block content %}
+<h1>Izvēlies savu Case</h1>
+<div class="konteineri">
+    <div class="swiper mySwiper gludeklis">
+            <div class="swiper-wrapper">
+                {% for case in cases %}
+                    <div class="swiper-slide">
+                        <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="Logo" class="case">
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+<script>
+    var swiper = new Swiper(".mySwiper", {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: true,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+    });
+  </script>
+
+{% endblock %}
