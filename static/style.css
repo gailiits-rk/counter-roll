@@ -6,6 +6,9 @@ body {
     padding: 0;
     
 }
+main{
+    padding: 20px;
+}
 header {
     background-color: #000000;
     padding: 10px;
