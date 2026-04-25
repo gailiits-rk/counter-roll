@@ -13,17 +13,16 @@
         <h2>Nepareizs e-pasts vai parole</h2>
         {%endif%}
 
-        <form action="/" method="POST"> 
+        <form action="/" method="POST">
+            <div class="name-field"><label for="email">Email:</label> 
 
-            <label for="email">Email:</label> 
+            <input type="email" name="email" required></div>
 
-            <input type="email" name="email" required>
+            <div class="name-field"><label for="password">Password:</label> 
 
-            <label for="password">Password:</label> 
+            <input type="password" name="password" required></div>
 
-            <input type="password" name="password" required><br> 
-
-            <button type="submit">Submit</button> 
+            <button type="submit">Pierakstīties</button> 
 
         </form>
 

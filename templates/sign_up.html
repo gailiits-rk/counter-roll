@@ -1,37 +1,45 @@
 <!DOCTYPE html>
 <html lang="lv">
+
 <head>
     <meta charset="UTF-8">
     <title>Counter-Roll | Sign-Up</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='profiling-style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
+
 <body>
     <main>
         <h1>Izveido profilu<h1>
-        <h2>{{mistake}}</h2>
+                <h2>{{mistake}}</h2>
 
-        <form action="/sign-up" method="POST">
+                <form action="/sign-up" method="POST">
+                    <div class="name-field"><label for="username">Lietotājvārds:</label>
 
-            <label for="username">Lietotājvārds:</label> 
+                        <input type="text" name="username" required>
+                    </div>
 
-            <input type="text" name="username" required>
+                    <div class="name-field"><label for="email">E-pasts:</label>
 
-            <label for="email">E-pasts:</label> 
+                        <input type="email" name="email" required>
+                    </div>
 
-            <input type="email" name="email" required>
+                    <div class="name-field"><label for="password">Parole:</label>
 
-            <label for="password">Parole:</label> 
+                        <input type="password" name="password" required>
+                    </div>
 
-            <input type="password" name="password" required>
-            
-            <label for="age">Vecums (pilni gadi):</label> 
+                    <div class="name-field"><label for="age">Vecums (pilni gadi):</label>
 
-            <input type="text" name="age" required><br>
+                        <input type="text" name="age" required>
+                    </div>
 
-            <button type="submit">Submit</button> 
 
-        </form>
+                    <button type="submit">Izveidot</button>
+
+                </form>
+                <a href="{{url_for('home')}}">Jau ir profils?</a>
     </main>
 </body>
+
 </html>
