@@ -10,35 +10,35 @@
 
 <body>
     <main>
-        <h1>Izveido profilu<h1>
+        <h1>Sign Up<h1>
                 <h2>{{mistake}}</h2>
 
                 <form action="/sign-up" method="POST">
-                    <div class="name-field"><label for="username">Lietotājvārds:</label>
+                    <div class="name-field"><label for="username">Username:</label>
 
                         <input type="text" name="username" required>
                     </div>
 
-                    <div class="name-field"><label for="email">E-pasts:</label>
+                    <div class="name-field"><label for="email">E-mail:</label>
 
                         <input type="email" name="email" required>
                     </div>
 
-                    <div class="name-field"><label for="password">Parole:</label>
+                    <div class="name-field"><label for="password">Password:</label>
 
                         <input type="password" name="password" required>
                     </div>
 
-                    <div class="name-field"><label for="age">Vecums (pilni gadi):</label>
+                    <div class="name-field"><label for="age">Age (full years):</label>
 
                         <input type="text" name="age" required>
                     </div>
 
 
-                    <button type="submit">Izveidot</button>
+                    <button type="submit">Sign Up</button>
 
                 </form>
-                <a href="{{url_for('home')}}">Jau ir profils?</a>
+                <a href="{{url_for('home')}}">Already have a profile?</a>
     </main>
 </body>
 

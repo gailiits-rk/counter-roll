@@ -38,19 +38,19 @@ def home():
         session["user_id"] = user["id"]
         session["username"] = user["username"]
 
-        return redirect(url_for("opening"))
+        return redirect(url_for("front_page"))
 
     return render_template("index.html", first=True)
 
 
-@app.route("/opening")
-def opening():
+@app.route("/front-page")
+def front_page():
     if "user_id" not in session:
         return redirect(url_for("home"))
     conn = get_db_connection()
     cases = conn.execute("SELECT * FROM cases").fetchall()
     conn.close()
-    return render_template("opening-page.html", cases=cases)
+    return render_template("front-page.html", cases=cases)
 
 
 @app.route("/sign-up", methods=["GET", "POST"])
@@ -63,7 +63,7 @@ def sign_up():
         try:
             age = int(request.form.get("age"))
         except (TypeError, ValueError):
-            return render_template("sign_up.html", mistake="Lūdzu ievadi derīgu vecumu")
+            return render_template("sign_up.html", mistake="Please enter a valid age")
 
         conn = get_db_connection()
 
@@ -79,18 +79,18 @@ def sign_up():
             conn.close()
             return render_template(
                 "sign_up.html",
-                mistake="Nepietiekams vecums! Mēģini atkal, kad kļūsi vecāks",
+                mistake="Underage! Come back when you become legal",
             )
 
         elif emails is not None:
             conn.close()
             return render_template(
-                "sign_up.html", mistake="Šim e-pastam jau ir reģistrēts lietotājs"
+                "sign_up.html", mistake="This e-mail already has an account registered"
             )
 
         elif usernames is not None:
             conn.close()
-            return render_template("sign_up.html", mistake="Lietotājvārds aizņemts")
+            return render_template("sign_up.html", mistake="Username taken")
 
         hashed_password = generate_password_hash(password)
 
@@ -110,9 +110,35 @@ def sign_up():
         session["user_id"] = user["id"]
         session["username"] = user["username"]
 
-        return redirect(url_for("opening"))
+        return redirect(url_for("front_page"))
 
     return render_template("sign_up.html")
+
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        conn = get_db_connection()
+
+        user = conn.execute(
+            "SELECT * FROM Accounts WHERE id = ?", (session["user_id"],)
+        ).fetchone()
+
+        conn.close()
+
+        if user is None:
+            return render_template("index.html", first=False)
+
+        if not check_password_hash(user["password"], password):
+            return render_template("index.html", first=False)
+
+        return redirect(url_for("front_page"))
+
+    return render_template("index.html", first=True)
 
 @app.route("/logout")
 def logout():

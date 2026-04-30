@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Counter-roll | Edit profile{% endblock %}
+{% block content %}
+<h1>Edit profile</h1>
+<form action="/profile" method="POST">
+    <div class="name-field"><label for="username">Username:</label> 
+
+    <input type="username" name="username" placeholder="{{}}" required></div>
+
+    <div class="name-field"><label for="new_password"> New Password:</label> 
+
+    <input type="password" name="new_password" required></div>
+
+    <div class="name-field"><label for="new_password_2"> New Password (again):</label> 
+
+    <input type="password" name="new_password_2" required></div>
+
+    <button type="submit">Log In</button> 
+
+</form>
+{% endblock %}
