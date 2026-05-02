@@ -118,27 +118,42 @@ def sign_up():
 def profile():
     if "user_id" not in session:
         return redirect(url_for("home"))
+    conn = get_db_connection()
+
+    user = conn.execute(
+        "SELECT * FROM Accounts WHERE id = ?", (session["user_id"],)
+    ).fetchone()
+
+    
     if request.method == "POST":
         username = request.form.get("username")
+        new_password = request.form.get("new_password")
+        new_password_2 = request.form.get("new_password_2")
         password = request.form.get("password")
+        
+        if len(username) == 0:
+            new_username = user["username"]
+        if len(new_password):
+            new_hashed = user["password"]
 
-        conn = get_db_connection()
-
-        user = conn.execute(
-            "SELECT * FROM Accounts WHERE id = ?", (session["user_id"],)
-        ).fetchone()
-
-        conn.close()
-
-        if user is None:
-            return render_template("index.html", first=False)
-
-        if not check_password_hash(user["password"], password):
-            return render_template("index.html", first=False)
+        if len(username) != 0:
+            if not check_password_hash(user["password"], password):
+                return render_template("profile.html", mistake = "Wrong password on confirm", user=user)
+            else:
+                new_username = username
+        if len(new_password) != 0:
+            if new_password != new_password_2:
+                return render_template("profile.html", mistake="2nd password must match the first one", user=user)
+            elif not check_password_hash(user["password"], password):
+                return render_template("profile.html", mistake = "Wrong password on confirm", user=user)
+            else:
+                new_hashed = generate_password_hash(new_password)
+        
+        conn.execute("UPDATE Accounts SET username = ?, password = ? WHERE id = ?", (new_username, new_hashed, session["user_id"]))
 
         return redirect(url_for("front_page"))
-
-    return render_template("index.html", first=True)
+    conn.close()
+    return render_template("profile.html", user=user)
 
 @app.route("/logout")
 def logout():

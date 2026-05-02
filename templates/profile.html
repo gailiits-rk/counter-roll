@@ -2,20 +2,26 @@
 {% block title %}Counter-roll | Edit profile{% endblock %}
 {% block content %}
 <h1>Edit profile</h1>
+<h2>Email: {{user["email"]}}</h2>
+<h2>{{mistake}}</h2>
 <form action="/profile" method="POST">
     <div class="name-field"><label for="username">Username:</label> 
 
-    <input type="username" name="username" placeholder="{{}}" required></div>
+    <input type="username" name="username" placeholder="{{user["username"]}}"></div>
 
     <div class="name-field"><label for="new_password"> New Password:</label> 
 
-    <input type="password" name="new_password" required></div>
+    <input type="password" name="new_password"></div>
 
     <div class="name-field"><label for="new_password_2"> New Password (again):</label> 
 
-    <input type="password" name="new_password_2" required></div>
+    <input type="password" name="new_password_2"></div>
 
-    <button type="submit">Log In</button> 
+    <div class="name-field"><label for="password"> Password to confirm:</label> 
+
+    <input type="password" name="password" required></div>
+
+    <button type="submit">Save</button> 
 
 </form>
 {% endblock %}
