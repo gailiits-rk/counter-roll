@@ -133,7 +133,7 @@ def profile():
         
         if len(username) == 0:
             new_username = user["username"]
-        if len(new_password):
+        if len(new_password) == 0:
             new_hashed = user["password"]
 
         if len(username) != 0:
@@ -149,7 +149,11 @@ def profile():
             else:
                 new_hashed = generate_password_hash(new_password)
         
-        conn.execute("UPDATE Accounts SET username = ?, password = ? WHERE id = ?", (new_username, new_hashed, session["user_id"]))
+        conn.execute(
+            "UPDATE Accounts SET username = ?, password = ? WHERE id = ?",
+            (new_username, new_hashed, session["user_id"])
+        )
+        conn.commit()
 
         return redirect(url_for("front_page"))
     conn.close()
