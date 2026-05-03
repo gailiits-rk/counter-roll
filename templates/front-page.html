@@ -7,7 +7,7 @@
             <div class="swiper-wrapper">
                 {% for case in cases %}
                     <div class="swiper-slide case-slide">
-                        <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="{{case['name']}}" class="case">
+                        <a href="/{{case['id']}}" class = "case"><img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="{{case['name']}}" class="case"></a>
                         <h2>{{case['name']}}</h2>
                     </div>
                 {% endfor %}

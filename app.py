@@ -34,7 +34,7 @@ def home():
 
         if not check_password_hash(user["password"], password):
             return render_template("index.html", first=False)
-        
+
         session["user_id"] = user["id"]
         session["username"] = user["username"]
 
@@ -114,6 +114,7 @@ def sign_up():
 
     return render_template("sign_up.html")
 
+
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     if "user_id" not in session:
@@ -124,13 +125,12 @@ def profile():
         "SELECT * FROM Accounts WHERE id = ?", (session["user_id"],)
     ).fetchone()
 
-    
     if request.method == "POST":
         username = request.form.get("username")
         new_password = request.form.get("new_password")
         new_password_2 = request.form.get("new_password_2")
         password = request.form.get("password")
-        
+
         if len(username) == 0:
             new_username = user["username"]
         if len(new_password) == 0:
@@ -138,20 +138,28 @@ def profile():
 
         if len(username) != 0:
             if not check_password_hash(user["password"], password):
-                return render_template("profile.html", mistake = "Wrong password on confirm", user=user)
+                return render_template(
+                    "profile.html", mistake="Wrong password on confirm", user=user
+                )
             else:
                 new_username = username
         if len(new_password) != 0:
             if new_password != new_password_2:
-                return render_template("profile.html", mistake="2nd password must match the first one", user=user)
+                return render_template(
+                    "profile.html",
+                    mistake="2nd password must match the first one",
+                    user=user,
+                )
             elif not check_password_hash(user["password"], password):
-                return render_template("profile.html", mistake = "Wrong password on confirm", user=user)
+                return render_template(
+                    "profile.html", mistake="Wrong password on confirm", user=user
+                )
             else:
                 new_hashed = generate_password_hash(new_password)
-        
+
         conn.execute(
             "UPDATE Accounts SET username = ?, password = ? WHERE id = ?",
-            (new_username, new_hashed, session["user_id"])
+            (new_username, new_hashed, session["user_id"]),
         )
         conn.commit()
 
@@ -159,10 +167,28 @@ def profile():
     conn.close()
     return render_template("profile.html", user=user)
 
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
+
+
+@app.route("/<int:case_id>")
+def case_show(case_id):
+    conn = get_db_connection()
+    items = conn.execute(
+        "SELECT items.*, weapons.name  as weapon_name, rarities.rarity as rarity FROM items LEFT JOIN weapons ON items.weapon_id = weapons.id LEFT JOIN rarities ON items.rarity_id = rarities.id WHERE items.case_id = ?",
+        (case_id,),
+    ).fetchall()
+    case = conn.execute(
+        "SELECT * FROM cases WHERE id = ?",
+        (case_id,),
+    ).fetchone()
+    conn.close()
+
+    return render_template("case_display.html", items=items, case=case)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

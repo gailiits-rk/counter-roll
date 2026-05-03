@@ -9,10 +9,9 @@
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.png') }}">
-</head>
 <body>
     <header>
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <a href="{{url_for('front_page')}}"><img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo"></a>
         <nav>
             <a href="{{url_for('front_page')}}">Cases</a>
             <a href="{{url_for('profile')}}">Profile</a>

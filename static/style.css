@@ -4,7 +4,6 @@ body {
     color: #ff8000;
     margin: 0;
     padding: 0;
-    
 }
 main{
     padding: 20px;
@@ -69,4 +68,31 @@ h1{
 }
 .swiper-pagination-bullet-active {
      background-color: #000 !important;
+}
+.item{
+    width: 400px;
+    height: 400px;
+}
+.item.Covert{
+    background-color: #ff0000;
+}
+.item.Classified{
+    background-color: #FF00FF;
+}
+.item.Restricted{
+    background-color: #660361;
+}
+.item.Mil-Spec{
+    background-color: #0000Ff;
+}
+.item.Knife{
+    background-color: #fffb00;
+}
+.item img{
+    width: 300px;
+}
+.show{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }
