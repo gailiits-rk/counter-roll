@@ -1,12 +1,23 @@
 {%extends "base.html"%}
-{%block title%}{{case['name']}}{%endblock%}
+{%block title%}CASE | {{case['name']}}{%endblock%}
 {%block content%}
+<div class="case_info">
+
+    <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="{{case['name']}}">
+    <div class="case_description">
+        <h1>{{case['name']}}</h1>
+        <button>OPEN!</button> 
+    </div>
+    
+
+</div>
 <div class="show">
 {%for item in items%}
 
-    <div class="item {{item['rarity']}}">   
-    <p>{{item['weapon_name']}} | {{item['name']}}</p>
+    <div class="item">   
     <img src="{{ url_for('static', filename='images/skins/' + item['image']) }}" alt="{{item['name']}}">
+    <p>{{item['weapon_name']}} | {{item['name']}}</p>
+    <p class=" {{item['rarity']}}"> {{item['rarity']}}</p>
     </div>
 
 

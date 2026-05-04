@@ -70,29 +70,69 @@ h1{
      background-color: #000 !important;
 }
 .item{
-    width: 400px;
-    height: 400px;
+    margin:5px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: #000;
 }
-.item.Covert{
+.item p{
+    color: #000;
+    background-color: #ff8000;
+    padding: 5px;
+    border-radius: 5px;
+    width: 95%;
+    text-align: center;
+    font-weight: bold;
+}
+p.Covert{
     background-color: #ff0000;
 }
-.item.Classified{
+p.Classified{
     background-color: #FF00FF;
 }
-.item.Restricted{
+p.Restricted{
     background-color: #660361;
 }
-.item.Mil-Spec{
+p.Mil-Spec{
     background-color: #0000Ff;
 }
-.item.Knife{
+p.Knife{
     background-color: #fffb00;
 }
 .item img{
     width: 300px;
+    margin: 5px;
 }
+
 .show{
     width: 100%;
     display: flex;
-    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+.case_info{
+    height: 300px;
+    display:flex;
+    width: 100%;
+    justify-content: space-evenly;
+    background: #333;
+    background: radial-gradient(circle,rgba(51, 51, 51, 1) 0%, rgba(255, 128, 0, 1) 33%, rgba(51, 51, 51, 1) 67%, #ff8000 100%);
+    border-radius: 10px;
+}
+.case_info img{
+    height: 95%;
+}
+.case_description{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.case_description button{
+    height: 30px;
+    width: 80%;
+
 }
