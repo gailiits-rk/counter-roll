@@ -1,27 +1,38 @@
 {% extends "base.html" %}
 {% block title %}Counter-roll | Edit profile{% endblock %}
 {% block content %}
-<h1>Edit profile</h1>
-<h2>Email: {{user["email"]}}</h2>
-<h2>{{mistake}}</h2>
-<form action="/profile" method="POST">
-    <div class="name-field"><label for="username">Username:</label> 
+<div class="edit_profile">
+    <h1>Edit profile</h1>
+    <h2>Email: {{user["email"]}}</h2>
+    <h2>{{mistake}}</h2>
+    <form action="/profile" method="POST">
+        <div class="name-field"><label for="username">Username:</label> 
 
-    <input type="username" name="username" placeholder="{{user["username"]}}"></div>
+        <input type="username" name="username" placeholder="{{user["username"]}}"></div>
 
-    <div class="name-field"><label for="new_password"> New Password:</label> 
+        <div class="name-field"><label for="new_password"> New Password:</label> 
 
-    <input type="password" name="new_password"></div>
+        <input type="password" name="new_password"></div>
 
-    <div class="name-field"><label for="new_password_2"> New Password (again):</label> 
+        <div class="name-field"><label for="new_password_2"> New Password (again):</label> 
 
-    <input type="password" name="new_password_2"></div>
+        <input type="password" name="new_password_2"></div>
 
-    <div class="name-field"><label for="password"> Password to confirm:</label> 
+        <div class="name-field"><label for="password"> Password to confirm:</label> 
 
-    <input type="password" name="password" required></div>
+        <input type="password" name="password" required></div>
 
-    <button type="submit">Save</button> 
+        <button type="submit">Save</button>
 
+    </form>
+</div>
+    <h1>Delete Profile</h1>
+    <h2>Email: {{user["email"]}}</h2>
+    <form action="{{ url_for('delete_profile') }}" method="POST">
+    <input type="password" name="password" placeholder="Confirm password" required>
+    <button type="submit">Delete Profile</button>
 </form>
+<div>
+
+</div>
 {% endblock %}

@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 from pathlib import Path
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 
 def get_db_connection():
@@ -9,6 +10,14 @@ def get_db_connection():
     conn = sqlite3.connect(db)
     conn.row_factory = sqlite3.Row
     return conn
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return jsonify({'error': 'Please log in first'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 app = Flask(__name__)
@@ -187,7 +196,32 @@ def case_show(case_id):
     ).fetchone()
     conn.close()
 
-    return render_template("case_display.html", items=items, case=case)
+    return render_template("case_display.html", items=items, case=case,  user_id=session["user_id"])
+
+@app.route("/delete-profile", methods=["POST"])
+@login_required
+def delete_profile():
+    password = request.form.get("password")
+
+    conn = get_db_connection()
+    user = conn.execute(
+        "SELECT * FROM Accounts WHERE id = ?",
+        (session["user_id"],)
+    ).fetchone()
+
+    if not check_password_hash(user["password"], password):
+        conn.close()
+        return "Wrong password", 403
+
+    conn.execute(
+        "DELETE FROM Accounts WHERE id = ?",
+        (session["user_id"],)
+    )
+    conn.commit()
+    conn.close()
+
+    session.clear()
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":

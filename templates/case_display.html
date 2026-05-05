@@ -1,27 +1,274 @@
 {%extends "base.html"%}
 {%block title%}CASE | {{case['name']}}{%endblock%}
+
 {%block content%}
-<div class="case_info">
 
-    <img src="{{ url_for('static', filename='images/cases/' + case['image_file']) }}" alt="{{case['name']}}">
-    <div class="case_description">
-        <h1>{{case['name']}}</h1>
-        <button>OPEN!</button> 
+<!-- ═══════════════════════════════════════════
+     CASE OPENING WHEEL
+═══════════════════════════════════════════ -->
+<div class="case-opening-wheel">
+  <div class="wheel-header">
+    <h1>{{case['name']}}</h1>
+  </div>
+  
+  <div class="wheel-stage" id="wheel-stage">
+    <div class="wheel-stage-fade wheel-stage-fade--left"></div>
+    <div class="wheel-stage-fade wheel-stage-fade--right"></div>
+    <div class="wheel-indicator"></div>
+    <div class="wheel-track-wrap">
+      <div class="wheel-track" id="wheel-track"></div>
     </div>
-    
+  </div>
 
+  <div class="wheel-actions">
+    <button class="wheel-btn wheel-btn--spin" id="wheel-spin-btn">
+      <span class="wheel-btn-icon">⚡</span> SPIN
+    </button>
+    <button class="wheel-btn wheel-btn--again" id="wheel-again-btn" style="display:none;">
+      <span class="wheel-btn-icon">↺</span> OPEN AGAIN
+    </button>
+  </div>
 </div>
-<div class="show">
-{%for item in items%}
 
-    <div class="item">   
+<!-- win reveal overlay -->
+<div class="win-overlay" id="win-overlay" style="display:none;">
+  <div class="win-glow" id="win-glow"></div>
+  <div class="win-card" id="win-card">
+    <div class="win-label">YOU RECEIVED</div>
+    <img class="win-img" id="win-img" src="" alt="">
+    <div class="win-name" id="win-name"></div>
+    <div class="win-rarity" id="win-rarity"></div>
+    <div class="win-actions">
+      <button class="wheel-btn wheel-btn--again" id="win-again-btn">↺ OPEN AGAIN</button>
+      <button class="wheel-btn wheel-btn--close" id="win-close-btn">✕ CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PAGE CONTENT - Items Display
+═══════════════════════════════════════════ -->
+<div class="show">
+  {%for item in items%}
+  <div class="item">
     <img src="{{ url_for('static', filename='images/skins/' + item['image']) }}" alt="{{item['name']}}">
     <p>{{item['weapon_name']}} | {{item['name']}}</p>
-    <p class=" {{item['rarity']}}"> {{item['rarity']}}</p>
-    </div>
-
-
-{% endfor %}
+    <p class="{{item['rarity']}}">{{item['rarity']}}</p>
+  </div>
+  {%endfor%}
 </div>
-{%endblock%}
 
+<script>
+const CASE_ITEMS = [
+  {% for item in items %}
+  {
+    id: {{ item['id'] }},
+    name: "{{ item['name'] | e }}",
+    weapon: "{{ item['weapon_name'] | e }}",
+    rarity: "{{ item['rarity'] | e }}",
+    image: "{{ url_for('static', filename='images/skins/' + item['image']) }}"
+  }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+
+const RARITY_CFG = {
+  "Consumer Grade":  { color: "#b0c3d9", weight: 7979 },
+  "Industrial Grade":{ color: "#5e98d9", weight: 1598 },
+  "Mil-Spec":        { color: "#4b69ff", weight: 361  },
+  "Restricted":      { color: "#8847ff", weight: 58   },
+  "Classified":      { color: "#d32ce6", weight: 11   },
+  "Covert":          { color: "#eb4b4b", weight: 2    },
+  "Knife":           { color: "#e4ae39", weight: 0.26 },
+};
+
+function pickItem() {
+  const byRarity = {};
+  for (const item of CASE_ITEMS) {
+    if (!byRarity[item.rarity]) byRarity[item.rarity] = [];
+    byRarity[item.rarity].push(item);
+  }
+
+  let pool = [];
+  for (const [rarity, items] of Object.entries(byRarity)) {
+    const cfg = RARITY_CFG[rarity];
+    if (cfg) pool.push({ rarity, items, weight: cfg.weight });
+  }
+
+  const total = pool.reduce((s, p) => s + p.weight, 0);
+  let rand = Math.random() * total;
+  let chosen = pool[pool.length - 1];
+  for (const p of pool) {
+    rand -= p.weight;
+    if (rand <= 0) { chosen = p; break; }
+  }
+
+  const itemArr = chosen.items;
+  return itemArr[Math.floor(Math.random() * itemArr.length)];
+}
+
+const STRIP_COUNT = 60;
+const CARD_W = 190;
+const CARD_GAP = 8;
+
+function buildCard(item) {
+  const cfg = RARITY_CFG[item.rarity] || { color: "#ff8000" };
+  const card = document.createElement("div");
+  card.className = "wheel-card";
+  card.style.setProperty("--rarity-color", cfg.color);
+  card.innerHTML = `
+    <img src="${item.image}" alt="${item.weapon} | ${item.name}">
+    <div class="wheel-card-name">${item.weapon}<br><span>${item.name}</span></div>
+    <div class="wheel-card-rarity" style="color:${cfg.color}">${item.rarity}</div>
+  `;
+  return card;
+}
+
+const WIN_IDX = 49;
+let currentStripItems = [];
+let spinning = false;
+let audioCtx = null;
+let currentRafId = null;
+
+function buildStrip(winItem) {
+  const track = document.getElementById("wheel-track");
+  track.innerHTML = "";
+  track.style.transition = "none";
+  
+  currentStripItems = [];
+  
+  for (let i = 0; i < STRIP_COUNT; i++) {
+    const item = (i === WIN_IDX) ? winItem : pickItem();
+    currentStripItems.push(item);
+  }
+  
+  for (const item of currentStripItems) {
+    track.appendChild(buildCard(item));
+  }
+  
+  const stageW = document.getElementById("wheel-stage").offsetWidth;
+  const CARD_PAD = 8;
+  const startTranslate = stageW / 2 - CARD_PAD - CARD_W / 2;
+  track.style.transform = `translateX(${startTranslate}px)`;
+}
+
+function playTick() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = audioCtx.createBuffer(1, Math.floor(audioCtx.sampleRate * 0.018), audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.25));
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.22;
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.start();
+  } catch(e) {}
+}
+
+function doSpin() {
+  if (spinning) return;
+  spinning = true;
+
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+
+  const spinBtn = document.getElementById("wheel-spin-btn");
+  const againBtn = document.getElementById("wheel-again-btn");
+  spinBtn.style.display = "none";
+  againBtn.style.display = "none";
+
+  const winItem = pickItem();
+  buildStrip(winItem);
+
+  const track = document.getElementById("wheel-track");
+  const stageW = document.getElementById("wheel-stage").offsetWidth;
+  const CARD_PAD = 8;
+  const CARD_STEP = CARD_W + CARD_GAP;
+  
+  const winnerCenterLocal = CARD_PAD + (WIN_IDX+7) * CARD_STEP + CARD_W / 2;
+  const exactTarget = stageW / 2 - winnerCenterLocal;
+  const jitterMax = CARD_W * 0.3;
+  const jitter = (Math.random() - 0.5) * jitterMax;
+  const finalTranslate = exactTarget + jitter;
+
+  track.getBoundingClientRect();
+  track.style.transition = "transform 6s cubic-bezier(0.05, 0.85, 0.18, 1.0)";
+  track.style.transform = `translateX(${finalTranslate}px)`;
+
+  const spinStart = performance.now();
+  const SPIN_MS = 6000;
+  let lastBucket = null;
+
+  function tickLoop(now) {
+    if (now - spinStart >= SPIN_MS) return;
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(track).transform);
+    const currentX = matrix.m41;
+    const bucket = Math.floor(Math.abs(currentX) / CARD_STEP);
+    if (lastBucket === null) {
+      lastBucket = bucket;
+    } else if (bucket !== lastBucket) {
+      playTick();
+      lastBucket = bucket;
+    }
+    currentRafId = requestAnimationFrame(tickLoop);
+  }
+  
+  currentRafId = requestAnimationFrame(tickLoop);
+
+  setTimeout(() => {
+    if (currentRafId) cancelAnimationFrame(currentRafId);
+    showWin(winItem);
+    spinning = false;
+  }, 6300);
+}
+
+function showWin(item) {
+  const cfg = RARITY_CFG[item.rarity] || { color: "#ff8000" };
+
+  document.getElementById("win-img").src = item.image;
+  document.getElementById("win-name").textContent = `${item.weapon} | ${item.name}`;
+  document.getElementById("win-rarity").textContent = item.rarity;
+  document.getElementById("win-rarity").style.color = cfg.color;
+
+  const glow = document.getElementById("win-glow");
+  glow.style.background = `radial-gradient(ellipse at center, ${cfg.color}55 0%, transparent 70%)`;
+
+  const overlay = document.getElementById("win-overlay");
+  overlay.style.display = "flex";
+  requestAnimationFrame(() => overlay.classList.add("win-overlay--visible"));
+}
+
+function hideWin() {
+  const overlay = document.getElementById("win-overlay");
+  overlay.classList.remove("win-overlay--visible");
+  setTimeout(() => { overlay.style.display = "none"; }, 300);
+}
+
+function resetSpinner() {
+  hideWin();
+  const spinBtn = document.getElementById("wheel-spin-btn");
+  const againBtn = document.getElementById("wheel-again-btn");
+  spinBtn.style.display = "inline-flex";
+  againBtn.style.display = "none";
+
+  const track = document.getElementById("wheel-track");
+  track.style.transition = "none";
+  track.style.transform = "translateX(0)";
+  track.innerHTML = "";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("wheel-spin-btn").addEventListener("click", doSpin);
+  document.getElementById("wheel-again-btn").addEventListener("click", resetSpinner);
+  document.getElementById("win-again-btn").addEventListener("click", () => {
+    hideWin();
+    setTimeout(doSpin, 350);
+  });
+  document.getElementById("win-close-btn").addEventListener("click", hideWin);
+});
+</script>
+
+{%endblock%}
