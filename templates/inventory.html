@@ -1,0 +1,28 @@
+{%extends "base.html"%}
+{%block title%}Inventory | {{session['username']}}{%endblock%}
+
+{%block content%}
+
+<div class="case-opening-wheel">
+  <div class="wheel-header">
+    <h1>{{ session['username'] }}'s Inventory</h1>
+  </div>
+</div>
+
+{%if items%}
+<div class="show">
+  {%for item in items%}
+  <div class="item">
+    <img src="{{ url_for('static', filename='images/skins/' + item['image']) }}" alt="{{item['name']}}">
+    <p>{{item['weapon_name']}} | {{item['name']}}</p>
+    <p class="{{item['rarity']}}">{{item['rarity']}}</p>
+  </div>
+  {%endfor%}
+</div>
+{%else%}
+<div style="text-align:center; padding: 4rem 1rem; opacity: 0.5;">
+  <p style="font-size: 1.4rem;">No items yet — open some cases!</p>
+</div>
+{%endif%}
+
+{%endblock%}

@@ -180,7 +180,34 @@ function doSpin() {
   spinBtn.style.display = "none";
   againBtn.style.display = "none";
 
-  const winItem = pickItem();
+  const CASE_ID = {{ case['id'] }};
+
+  fetch(`/api/open-case/${CASE_ID}`, { method: "POST" })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        alert("Error: " + data.error);
+        spinning = false;
+        spinBtn.style.display = "inline-flex";
+        return;
+      }
+      const winItem = {
+        id:     data.id,
+        name:   data.name,
+        weapon: data.weapon,
+        rarity: data.rarity,
+        image:  `/static/images/skins/${data.image}`
+      };
+      _runSpin(winItem);
+    })
+    .catch(() => {
+      alert("Server error, please try again.");
+      spinning = false;
+      spinBtn.style.display = "inline-flex";
+    });
+}
+
+function _runSpin(winItem) {
   buildStrip(winItem);
 
   const track = document.getElementById("wheel-track");
@@ -222,6 +249,7 @@ function doSpin() {
     if (currentRafId) cancelAnimationFrame(currentRafId);
     showWin(winItem);
     spinning = false;
+    document.getElementById("wheel-spin-btn").style.display = "inline-flex";
   }, 6300);
 }
 
@@ -267,7 +295,10 @@ document.addEventListener("DOMContentLoaded", () => {
     hideWin();
     setTimeout(doSpin, 350);
   });
-  document.getElementById("win-close-btn").addEventListener("click", hideWin);
+  document.getElementById("win-close-btn").addEventListener("click", () => {
+    hideWin();
+    document.getElementById("wheel-spin-btn").style.display = "inline-flex";
+  });
 });
 </script>
 

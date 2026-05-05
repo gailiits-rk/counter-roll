@@ -108,7 +108,6 @@ def sign_up():
             (email, hashed_password, username, age),
         )
         conn.commit()
-        conn.close()
 
         user = conn.execute(
             "SELECT * FROM Accounts WHERE email = ?", (email,)
@@ -197,6 +196,101 @@ def case_show(case_id):
     conn.close()
 
     return render_template("case_display.html", items=items, case=case,  user_id=session["user_id"])
+
+@app.route("/inventory")
+def inventory():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    conn = get_db_connection()
+    items = conn.execute(
+        """SELECT items.*, weapons.name AS weapon_name, rarities.rarity AS rarity
+           FROM inventory
+           JOIN items    ON inventory.item_id   = items.id
+           LEFT JOIN weapons  ON items.weapon_id  = weapons.id
+           LEFT JOIN rarities ON items.rarity_id  = rarities.id
+           WHERE inventory.account_id = ?""",
+        (session["user_id"],),
+    ).fetchall()
+    conn.close()
+    return render_template("inventory.html", items=items)
+
+
+@app.route("/api/open-case/<int:case_id>", methods=["POST"])
+@login_required
+def open_case(case_id):
+    RARITY_WEIGHTS = {
+        "Consumer Grade":   7979,
+        "Industrial Grade": 1598,
+        "Mil-Spec":         361,
+        "Restricted":       58,
+        "Classified":       11,
+        "Covert":           2,
+        "Knife":            0.26,
+    }
+
+    import random
+
+    conn = get_db_connection()
+
+    # Verify the case exists
+    case = conn.execute("SELECT * FROM cases WHERE id = ?", (case_id,)).fetchone()
+    if case is None:
+        conn.close()
+        return jsonify({"error": "Case not found"}), 404
+
+    # Load all items for this case with rarity names
+    items = conn.execute(
+        """SELECT items.*, weapons.name AS weapon_name, rarities.rarity AS rarity
+           FROM items
+           LEFT JOIN weapons  ON items.weapon_id  = weapons.id
+           LEFT JOIN rarities ON items.rarity_id  = rarities.id
+           WHERE items.case_id = ?""",
+        (case_id,),
+    ).fetchall()
+
+    if not items:
+        conn.close()
+        return jsonify({"error": "No items in this case"}), 400
+
+    # Group items by rarity
+    by_rarity = {}
+    for item in items:
+        r = item["rarity"]
+        by_rarity.setdefault(r, []).append(item)
+
+    # Build weighted pool (only rarities that actually exist in this case)
+    pool = [
+        {"rarity": r, "items": item_list, "weight": RARITY_WEIGHTS.get(r, 1)}
+        for r, item_list in by_rarity.items()
+    ]
+
+    total = sum(p["weight"] for p in pool)
+    rand = random.uniform(0, total)
+    chosen_group = pool[-1]
+    for p in pool:
+        rand -= p["weight"]
+        if rand <= 0:
+            chosen_group = p
+            break
+
+    won_item = random.choice(chosen_group["items"])
+
+    # Persist to inventory
+    conn.execute(
+        "INSERT INTO inventory (account_id, item_id) VALUES (?, ?)",
+        (session["user_id"], won_item["id"]),
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "id":     won_item["id"],
+        "name":   won_item["name"],
+        "weapon": won_item["weapon_name"],
+        "rarity": won_item["rarity"],
+        "image":  won_item["image"],
+    })
+
 
 @app.route("/delete-profile", methods=["POST"])
 @login_required
