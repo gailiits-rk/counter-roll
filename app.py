@@ -127,13 +127,16 @@ def sign_up():
 def profile():
     if "user_id" not in session:
         return redirect(url_for("home"))
-    conn = get_db_connection()
 
+    conn = get_db_connection()
     user = conn.execute(
         "SELECT * FROM Accounts WHERE id = ?", (session["user_id"],)
     ).fetchone()
 
+    mistake = None  # for update errors
+
     if request.method == "POST":
+        # --- existing update logic ---
         username = request.form.get("username")
         new_password = request.form.get("new_password")
         new_password_2 = request.form.get("new_password_2")
@@ -171,9 +174,16 @@ def profile():
         )
         conn.commit()
 
+        # After successful update, redirect to front_page (no changes needed)
         return redirect(url_for("front_page"))
+
+    # GET request: check for the 'deleted' query parameter
+    deleted_param = request.args.get("deleted")
+    # Convert the string 'False' to a real boolean False, otherwise None
+    deleted = False if deleted_param == "False" else None
+
     conn.close()
-    return render_template("profile.html", user=user)
+    return render_template("profile.html", user=user, mistake=mistake, deleted=deleted)
 
 
 @app.route("/logout")
@@ -183,7 +193,9 @@ def logout():
 
 
 @app.route("/<int:case_id>")
+@login_required
 def case_show(case_id):
+    
     conn = get_db_connection()
     items = conn.execute(
         "SELECT items.*, weapons.name  as weapon_name, rarities.rarity as rarity FROM items LEFT JOIN weapons ON items.weapon_id = weapons.id LEFT JOIN rarities ON items.rarity_id = rarities.id WHERE items.case_id = ?",
@@ -305,7 +317,8 @@ def delete_profile():
 
     if not check_password_hash(user["password"], password):
         conn.close()
-        return "Wrong password", 403
+        # Redirect with a query parameter indicating failure
+        return redirect(url_for("profile", deleted=False))
 
     conn.execute(
         "DELETE FROM Accounts WHERE id = ?",

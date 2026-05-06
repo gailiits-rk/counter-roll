@@ -28,6 +28,9 @@
 </div>
     <h1>Delete Profile</h1>
     <h2>Email: {{user["email"]}}</h2>
+    {%if deleted == False%}
+    <h2>Wrong password!</h2>
+    {%endif%}
     <form action="{{ url_for('delete_profile') }}" method="POST">
     <input type="password" name="password" placeholder="Confirm password" required>
     <button type="submit">Delete Profile</button>
