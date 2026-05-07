@@ -1,46 +1,63 @@
+/* profiling-style.css - Matches main site theme (style.css) */
+
+/* Import Inter font to match main style */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #333;
-    color: #ff8000;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+    color: #ff9f4a;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     margin: 0;
+    padding: 20px;
 }
 
 h1 {
-    font-size: 38px;
-    margin: 0;
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #ff9f4a, #ff6600);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.5px;
 }
 
 h2 {
     margin: 0;
-    font-size: 20px;
-    color: red;
+    font-size: 0.95em;
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 8px 16px;
+    border-radius: 40px;
+    text-align: center;
+    font-weight: 500;
 }
 
-/* Main container */
+/* Main container - matches card style from main site */
 main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-
-    width: 400px;
-    min-height: 400px;
-    padding: 25px;
-
-    background-color: black;
-    border-radius: 30px;
-    border: solid #ff8000;
+    gap: 24px;
+    width: 440px;
+    max-width: 90%;
+    padding: 40px 32px;
+    background: linear-gradient(145deg, #0f0f0f, #080808);
+    border-radius: 32px;
+    border: 1px solid rgba(255, 128, 0, 0.4);
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+    transition: transform 0.2s ease;
 }
 
 /* Form layout */
 form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 20px;
     width: 100%;
 }
 
@@ -50,88 +67,161 @@ form {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    font-size: 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    gap: 15px;
 }
 
-/* Inputs */
+/* Labels */
+.name-field label {
+    color: #ff9f4a;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* Inputs - matches dark theme with orange border */
 input {
-    background-color: black;
-    border: solid #ff8000;
-    color: #ff8000;
-    width: 55%;
-    padding: 5px;
+    background-color: #0a0a0a;
+    border: 1px solid rgba(255, 128, 0, 0.5);
+    border-radius: 40px;
+    color: #ff9f4a;
+    width: 60%;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    outline: none;
 }
 
-/* Button */
+input:focus {
+    border-color: #ff8000;
+    box-shadow: 0 0 0 2px rgba(255, 128, 0, 0.2);
+    background-color: #0f0f0f;
+}
+
+input::placeholder {
+    color: rgba(255, 159, 74, 0.4);
+}
+
+/* Button - matches wheel-btn style from main site */
 button {
-    width: 60%;
+    width: 70%;
     margin: 10px auto 0 auto;
-    border: solid #ff8000;
-    background-color: black;
+    background: #000000;
+    border: 1px solid #ff8000;
+    border-radius: 60px;
     color: #ff8000;
     cursor: pointer;
-    font-size: 20px;
-    padding: 8px;
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 12px 20px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    letter-spacing: 0.5px;
 }
 
-/* Links */
+button:hover {
+    transform: scale(1.02);
+    background: #1a1a1a;
+    box-shadow: 0 5px 20px rgba(255, 128, 0, 0.3);
+    border-color: #ff9f4a;
+}
+
+/* Links - matches nav link style */
 a {
-    color: #ff8000;
-    font-size: 18px;
+    color: #ff9f4a;
+    font-size: 0.9rem;
     text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 6px 12px;
+    border-radius: 30px;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 a:hover {
-    text-decoration: underline;
+    background: linear-gradient(135deg, #ff8000, #ff9f4a);
+    color: #000000;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(255, 128, 0, 0.3);
 }
 
-@media (max-width: 900px) {
-
+/* Responsive design - matches main site breakpoints */
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+    
     main {
-        width: 90%;
-        min-height: auto;
-        padding: 30px;
-        margin: 20px; 
+        width: 100%;
+        max-width: 380px;
+        padding: 30px 24px;
+        gap: 20px;
     }
 
     h1 {
-        font-size: 32px;
+        font-size: 1.9em;
         text-align: center;
     }
 
     h2 {
-        font-size: 18px;
-        text-align: center;
+        font-size: 0.85rem;
+        width: 100%;
     }
 
-    /* Stack label above input */
+    /* Stack label above input on mobile */
     .name-field {
         flex-direction: column;
-        align-items: center;   /* 👈 center everything */
+        align-items: flex-start;
         gap: 8px;
         width: 100%;
     }
 
     .name-field label {
-        text-align: center;
-        width: 100%;
+        font-size: 0.9rem;
+        padding-left: 8px;
     }
 
     input {
-        width: 90%;   /* 👈 not full width, looks nicer */
-        font-size: 18px;
-        padding: 10px;
+        width: calc(100% - 32px);
+        font-size: 0.95rem;
+        padding: 10px 16px;
     }
-
 
     button {
         width: 100%;
-        font-size: 20px;
-        padding: 12px;
+        font-size: 1rem;
+        padding: 12px 16px;
+        margin-top: 8px;
     }
 
     a {
-        font-size: 18px;
+        font-size: 0.85rem;
         text-align: center;
+        display: inline-block;
     }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    main {
+        padding: 24px 20px;
+    }
+    
+    h1 {
+        font-size: 1.6em;
+    }
+    
+    button {
+        padding: 10px 14px;
+    }
+    
+    input {
+        padding: 8px 14px;
+    }
+}
+
+/* Error message specific styling */
+h2:not(:empty) {
+    border-left: 3px solid #ff6b6b;
+    background: rgba(255, 107, 107, 0.08);
 }

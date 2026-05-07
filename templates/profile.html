@@ -4,7 +4,9 @@
 <div class="edit_profile">
     <h1>Edit profile</h1>
     <h2>Email: {{user["email"]}}</h2>
+    {%if mistake%}
     <h2>{{mistake}}</h2>
+    {%endif%}
     <form action="/profile" method="POST">
         <div class="name-field"><label for="username">Username:</label> 
 
@@ -26,16 +28,16 @@
 
     </form>
 </div>
+    
+<div class="delete-section">
     <h1>Delete Profile</h1>
-    <h2>Email: {{user["email"]}}</h2>
-    {%if deleted == False%}
-    <h2>Wrong password!</h2>
-    {%endif%}
-    <form action="{{ url_for('delete_profile') }}" method="POST">
-    <input type="password" name="password" placeholder="Confirm password" required>
-    <button type="submit">Delete Profile</button>
-</form>
-<div>
-
+        <h2>Email: {{user["email"]}}</h2>
+        {%if deleted == False%}
+        <h2>Wrong password!</h2>
+        {%endif%}
+        <form action="{{ url_for('delete_profile') }}" method="POST">
+        <input type="password" name="password" placeholder="Confirm password" required>
+        <button type="submit">Delete Profile</button>
+    </form>
 </div>
 {% endblock %}
