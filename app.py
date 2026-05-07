@@ -53,9 +53,8 @@ def home():
 
 
 @app.route("/front-page")
+@login_required
 def front_page():
-    if "user_id" not in session:
-        return redirect(url_for("home"))
     conn = get_db_connection()
     cases = conn.execute("SELECT * FROM cases").fetchall()
     conn.close()
@@ -124,9 +123,9 @@ def sign_up():
 
 
 @app.route("/profile", methods=["GET", "POST"])
+@login_required
 def profile():
-    if "user_id" not in session:
-        return redirect(url_for("home"))
+    
 
     conn = get_db_connection()
     user = conn.execute(

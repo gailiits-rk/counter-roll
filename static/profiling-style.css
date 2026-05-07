@@ -13,6 +13,7 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 20px;
+    overflow: hidden;
 }
 
 h1 {
@@ -149,6 +150,7 @@ a:hover {
 @media (max-width: 768px) {
     body {
         padding: 16px;
+        overflow: hidden;
     }
     
     main {
@@ -199,29 +201,4 @@ a:hover {
         text-align: center;
         display: inline-block;
     }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    main {
-        padding: 24px 20px;
-    }
-    
-    h1 {
-        font-size: 1.6em;
-    }
-    
-    button {
-        padding: 10px 14px;
-    }
-    
-    input {
-        padding: 8px 14px;
-    }
-}
-
-/* Error message specific styling */
-h2:not(:empty) {
-    border-left: 3px solid #ff6b6b;
-    background: rgba(255, 107, 107, 0.08);
 }

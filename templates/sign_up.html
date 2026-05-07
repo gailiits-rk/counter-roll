@@ -12,7 +12,9 @@
 <body>
     <main>
         <h1>Sign Up</h1>
+                {%if mistake%}
                 <h2>{{mistake}}</h2>
+                {%endif%}
 
                 <form action="/sign-up" method="POST">
                     <div class="name-field"><label for="username">Username:</label>
